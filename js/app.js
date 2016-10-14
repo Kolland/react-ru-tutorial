@@ -89,25 +89,60 @@ var News = React.createClass({
   }
 });
 
-var TestInput = React.createClass({
+var Add = React.createClass({
   componentDidMount: function() {
-    ReactDOM.findDOMNode(this.refs.myTestInput).focus();
+    ReactDOM.findDOMNode(this.refs.author).focus();
   },
-  onBtnClickHandler: function() {
-    console.log(this.refs);
-    alert(ReactDOM.findDOMNode(this.refs.myTestInput).value);
+  getInitialState: function() {
+    return {
+      agreeNotChecked: true,
+      authorIsEmpty: true,
+      textIsEmpty: true
+    }
   },
+  onBtnClickHandler: function(e) {
+    e.preventDefault();
+    console.log('sometext');
+  },
+  onCheckRuleClick: function (e) {
+    this.setState({agreeNotChecked:!e.target.checked});
+  },
+  onFieldChange: function (fieldName, e) {
+    this.setState({[''+fieldName]:!e.target.value.trim()});
+  },
+  // onCheckText: function (e) {
+  //   this.setState({textIsEmpty:!e.target.value.trim()});
+  // },
   render: function() {
     return (
-      <div>
+      <form>
         <input
-          className='test-input'
+          className='add__author'
           defaultValue=''
-          placeholder='введите значение'
-          ref='myTestInput'
-        />
-        <button onClick={this.onBtnClickHandler} ref='alert_button'>Показать alert</button>
-      </div>
+          placeholder='имя автора'
+          ref='author'
+          onChange={this.onFieldChange.bind(this, 'authorIsEmpty')}/>
+        <textarea
+          className='add__text'
+          defaultValue=''
+          placeholder='текст новости'
+          ref='text'
+          onChange={this.onFieldChange.bind(this, 'textIsEmpty')}/>
+        <label>
+          <input
+            type='checkbox'
+            onClick={this.onCheckRuleClick}
+            ref='checkrule' />
+            Я согласен с правилами
+        </label>
+        <button
+          className='add__btn'
+          onClick={this.onBtnClickHandler}
+          ref='alert_button'
+          disabled={this.state.authorIsEmpty || this.state.textIsEmpty || this.state.agreeNotChecked}>
+          Показать alert
+        </button>
+      </form>
     );
   }
 });
@@ -117,7 +152,7 @@ var App = React.createClass({
     return (
       <div className='app'>
         <h3>Новости</h3>
-        <TestInput />
+        <Add />
         <News data={my_news} />
       </div>
     );
